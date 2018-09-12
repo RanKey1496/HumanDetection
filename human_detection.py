@@ -25,6 +25,7 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     
     im_height, im_width = (None, None)
+    frame_center = (None)
     
     try:
         while True:
@@ -33,20 +34,21 @@ if __name__ == '__main__':
             
             if im_height == None:
                 im_height, im_width = frame.shape[:2]
+                print('Height: ', im_height, ' Width:', im_width)
                 
             try:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             except:
                 print("Error converting to RGB")
-            frame = cv2.resize(frame, (int(im_width*1.5), int(im_height*1.5)))
+            frame = cv2.resize(frame, (int(im_width), int(im_height)))
             boxes, scores, classes = detector_utils.detect_objects(frame, detection_graph, sess)
             
-            detector_utils.draw_box_on_image(num_humans_detect, score_thresh, scores, boxes, classes, im_width, im_height, frame)
-                        
+            print(detector_utils.draw_box_on_image(num_humans_detect, score_thresh, scores, boxes, classes, im_width, im_height, frame))
+            #q print(detector_utils.get_object_position(num_humans_detect, score_thresh, scores, boxes, classes, im_width, im_height))                        
             cv2.imshow('Human detector', cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
             
-    except:
-        print("Error")
+    except Exception as e:
+        print("Error: " + str(e))

@@ -47,6 +47,11 @@ def load_inference_graph():
 # In[4]:
 def draw_box_on_image(num_humans, score_tresh, scores, boxes, classes, im_width, im_height, image_np):
     color = (0, 50, 255)
+    frame_center = (int(im_width/2), int(im_height/2))
+    rp1, rp2 = get_rectangle_points(im_width, im_height)
+    cv2.rectangle(image_np, rp1, rp2, (125, 28, 51), 3, 1)
+    cv2.circle(image_np, frame_center, 1, (0, 255, 0), -1)
+    positions = []
     for i in range(num_humans):
         if (scores[i] > score_tresh):
             if classes[i] == 1:
@@ -59,6 +64,21 @@ def draw_box_on_image(num_humans, score_tresh, scores, boxes, classes, im_width,
                 cv2.putText(image_np, 'Humano', (int(left), int(top)-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
                 cv2.putText(image_np, 'Probabilidad: ' + str("{0:.2f}".format(scores[i])), (int(left), int(top)-20),
                                                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                positions.append((left, right, top, bottom))
+    return positions
+                
+def get_rectangle_points(im_width, im_height):
+    (left, top, right, bottom) = (im_width/4, im_height/4, im_width*(3/4), im_height*(3/4))
+    return (int(left), int(top)), (int(right), int(bottom))   
+ 
+# Solo devuelve el valor del primer humano encontrado
+def get_object_position(num_humans, score_tresh, scores, boxes, classes, im_width, im_height):
+    for i in range(num_humans):
+        if (scores[i] > score_tresh):
+            if (classes[i] == 1):
+                return (boxes[i][1] * im_width, boxes[i][3] * im_width, boxes[i][0] * im_height,
+                        boxes[i][2] * im_height)            
+                
 # In[5]:
 def draw_text_on_image(fps, image_np):
     cv2.putText(image_np, fps, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (77, 255, 9), 2)
@@ -77,3 +97,5 @@ def detect_objects(image_np, detection_graph, sess):
         [boxes, scores, classes, num_detections],
         feed_dict={image_tensor: image_np_expanded})
     return np.squeeze(boxes), np.squeeze(scores), np.squeeze(classes)
+
+# In[7]:
