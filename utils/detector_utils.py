@@ -61,8 +61,8 @@ def draw_box_on_image(num_humans, score_tresh, scores, boxes, classes, im_width,
                 p2 = (int(right), int(bottom))
                 
                 cv2.rectangle(image_np, p1, p2, color, 3, 1)
-                cv2.putText(image_np, 'Humano', (int(left), int(top)-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-                cv2.putText(image_np, 'Probabilidad: ' + str("{0:.2f}".format(scores[i])), (int(left), int(top)-20),
+                cv2.putText(image_np, 'Phone', (int(left), int(top)-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                cv2.putText(image_np, 'Prob: ' + str("{0:.2f}".format(scores[i])), (int(left), int(top)-20),
                                                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 positions.append((left, right, top, bottom))
     return positions
